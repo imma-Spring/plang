@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/immaspring/projects/lang/bld",
+  "command": "/usr/bin/cc -O3 -DNDEBUG -o CMakeFiles/plang.dir/src/main.c.o -c /home/immaspring/projects/lang/src/main.c",
+  "file": "/home/immaspring/projects/lang/src/main.c",
+  "output": "CMakeFiles/plang.dir/src/main.c.o"
+}
+]
