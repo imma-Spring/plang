@@ -1,6 +1,6 @@
 PLang TODO
 
-- [ ] Lex source into a tokens or something
+- [X] Lex source into a tokens or something
 
 - [ ] Parse tokens or something into AST
 

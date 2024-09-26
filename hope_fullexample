@@ -1,0 +1,21 @@
+const std : lib = #include("stdlib")
+
+const Vec3 : type = struct {
+  var x : f32
+  var y : f32
+  var z : f32
+
+  pub fnc add(other : Vec3) : Vec3 {
+    var x : f32 = self.x + other.x
+    var y : f32 = self.y + other.y
+    var z : f32 = self.z + other.z
+    return Vec3{.x = x, .y = y, .z = z}
+  }
+}
+
+pub fnc main() : i8 {
+  const a : Vec3 = {.x = 0, .y = 0, .z = 0}
+  const b : Vec3 = {.x = 1, .y = 1, .z = 1}
+  std.println(a.add(b))
+  return 0
+}

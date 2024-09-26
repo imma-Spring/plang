@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 long file_size(FILE *file) {
   if (!file) {
@@ -60,18 +61,122 @@ void print_usage(char **argv) {
 typedef struct {
   enum ErrorType {
     ERROR_NONE = 0,
+    ERROR_ARGUMENTS,
     ERROR_TYPE,
     ERROR_GENERIC,
     ERROR_TODO,
-    ERROR_SYNTAX
+    ERROR_SYNTAX,
+    ERROR_MAX,
   } error_type;
-  char *mgs;
+  char *msg;
 } Error;
 
 Error ok = {ERROR_NONE, NULL};
 
-Error lex(char *source, char **beg, char **end) { 
-	return ok;
+void print_error(Error err) {
+  if (err.error_type == ERROR_NONE) {
+    return;
+  }
+  printf("ERROR: ");
+  assert(ERROR_MAX == 6);
+  switch (err.error_type) {
+  default:
+    printf("Uknown error type...");
+    break;
+  case ERROR_TODO:
+    printf("TODO (not implemented)");
+    break;
+  case ERROR_SYNTAX:
+    printf("Invalid syntax");
+    break;
+  case ERROR_TYPE:
+    printf("Mismatched types");
+    break;
+  case ERROR_ARGUMENTS:
+    printf("Invalid arguments");
+    break;
+  case ERROR_NONE:
+  case ERROR_GENERIC:
+    break;
+  }
+  putchar('\n');
+  if (err.msg) {
+    printf("     : %s\n", err.msg);
+  }
+}
+
+#define ERROR_CREATE(n, t, msg) Error(n) = {(t), (msg)}
+#define ERROR_PREP(n, t, m)                                                    \
+  (n).error_type = (t);                                                        \
+  (n).msg = (m)
+
+const char *whitespace = " \r\n";
+const char *delimiters = " \r\n,():";
+
+Error lex(char *source, char **beg, char **end) {
+  Error err = ok;
+  if (!source || !beg || !end) {
+    ERROR_PREP(err, ERROR_ARGUMENTS, "Can not lex empty input.");
+    return err;
+  }
+  *beg = source;
+  *beg += strspn(*beg, whitespace);
+  *end = *beg;
+  if (**end == '\0') {
+    return err;
+  }
+  *end += strcspn(*beg, delimiters);
+  if (*end == *beg) {
+    *end += 1;
+  }
+  return err;
+}
+
+typedef long long integer_t;
+typedef struct Node {
+  enum NodeType {
+    NODE_TYPE_NONE,
+    NODE_TYPE_INTEGER,
+    NODE_TYPE_PROGRAM,
+    NODE_TYPE_MAX,
+  } type;
+
+  union NodeValue {
+    integer_t integer;
+  } value;
+
+  struct Node **children;
+
+} Node;
+
+#define nonep(node) ((node).type == NODE_TYPE_NONE)
+#define integerp(node) ((node).type == NODE_TYPE_INTEGER)
+
+typedef struct Binding {
+  char *id;
+  Node *value;
+  struct Binding *next;
+} Binding;
+
+typedef struct Environment {
+  struct Environment *parent;
+  Binding *bind;
+} Environment;
+
+void enviroment_set() {}
+
+Error parse_expr(char *source, Node *result) {
+  char *beg = source;
+  char *end = source;
+  Error err = ok;
+
+  while ((err = lex(end, &beg, &end)).error_type == ERROR_NONE) {
+    if (end - beg == 0) {
+      break;
+    }
+    printf("lexed: %.*s\n", end - beg, beg);
+  }
+  return err;
 }
 
 int main(int argc, char **argv) {
@@ -83,6 +188,10 @@ int main(int argc, char **argv) {
   char *contents = file_contents(path);
   if (contents) {
     printf("Contents of %s:\n---\n\"%s\"\n---\n", path, contents);
+    Node expression;
+    Error err = parse_expr(contents, &expression);
+    print_error(err);
+
     free(contents);
   }
   return 0;
