@@ -12,4 +12,6 @@ project(PLang C)
 add_executable(
 	plang
 	src/main.c
+  src/token.c
+  src/errors.c
 )

@@ -1,7 +1,10 @@
-PLang TODO
+# PLang TODO:
+- [ ] Lex files into tokens
 
-- [X] Lex source into a tokens or something
+- [ ] Parse tokens into AST
 
-- [ ] Parse tokens or something into AST
+- [ ] Turn into IL
 
-- [ ] Compile AST into ASM, starting with x86_64
+- [ ] Optimize ?
+
+- [ ] Convert to source (right now C)

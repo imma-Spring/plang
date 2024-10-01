@@ -1,8 +1,5 @@
-a : integer = 69
-a := 420
+a : int = 0
+a := 1
 
-b : integer
-b := 42
-
-defun foo (a:integer, b:integer):integer {
-}
+b : int
+b := a
